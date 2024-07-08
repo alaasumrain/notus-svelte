@@ -4,6 +4,7 @@
   import Header from "components/Header.svelte";
   import Footer from "components/Footer.svelte";
   import ServiceCard from 'components/Cards/ServiceCard.svelte';
+  import SearchBar from 'components/SearchBar.svelte';
 
   let services = [
     { 
@@ -12,8 +13,9 @@
       category: 'Category A', 
       description: 'Merge various files into a single Excel sheet',
       logoUrl: 'extract.png',
-      status: 'Finished',
-      route: '/admin/microservices/files-merge'
+      status: 'Live',
+      route: '/admin/microservices/files-merge',
+      tags: ['excel', 'merge', 'files']
     },
     { 
       id: 2, 
@@ -21,8 +23,9 @@
       category: 'Category B', 
       description: 'Reconcile system files for consistency and accuracy',
       logoUrl: 'reconcile.png',
-      status: 'In progress',
-      route: '/admin/microservices/files-reconciliation'
+      status: 'Live',
+      route: '/admin/microservices/files-reconciliation',
+      tags: ['reconciliation', 'files', 'system']
     },
     // ... add more services as needed
   ];
@@ -31,6 +34,16 @@
 
   function handleCardClick(serviceId) {
     console.log('Service clicked:', serviceId);
+    // Add navigation logic here
+  }
+
+  function handleSearch(event) {
+    const searchTerm = event.detail.toLowerCase();
+    services = services.filter(service => 
+      service.name.toLowerCase().includes(searchTerm) ||
+      service.description.toLowerCase().includes(searchTerm) ||
+      service.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+    );
   }
 </script>
 
@@ -43,9 +56,11 @@
         <div class="services-container">
           <h1 class="services-title">Our Microservices</h1>
           <hr class="separator" />
-          <p class="text-center text-gray-600 mb-8">Explore our range of data processing and management tools</p>
+          <div class="mb-6">
+            <SearchBar on:search={handleSearch} />
+          </div>
           <div class="services-grid">
-            {#each services as service}
+            {#each services as service (service.id)}
               <ServiceCard {service} on:click={() => handleCardClick(service.id)} />
             {/each}
           </div>

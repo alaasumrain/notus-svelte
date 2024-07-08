@@ -4,7 +4,7 @@
   import AdminNavbar from "components/Navbars/AdminNavbar.svelte";
   import Footer from "components/Footer.svelte";
   import Header from "components/Header.svelte";
-  import Dashboard from "views/admin/Dashboard.svelte";
+  import Dashboard from "views/admin/SanctionsServices.svelte";
 
   export let location;
 </script>

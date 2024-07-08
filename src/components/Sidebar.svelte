@@ -3,24 +3,42 @@
   import { link } from "svelte-routing";
   export let location;
 
-  let isMicroservicesOpen = false;
+  let openCategories = {};
 
-  function toggleMicroservices() {
-    isMicroservicesOpen = !isMicroservicesOpen;
+  function toggleCategory(category) {
+    openCategories[category] = !openCategories[category];
   }
 
   function isLinkActive(path) {
     return location.pathname === path;
   }
 
-  function isMicroserviceActive() {
-    return location.pathname.startsWith('/admin/');
-  }
+  let categories = [
+    {
+      name: "Microservices",
+      icon: "fas fa-server",
+      items: [
+        { name: "Sanctions Services", path: "/admin/dashboard" },
+        // Add more microservices here
+      ]
+    },
+    {
+      name: "Department A",
+      icon: "fas fa-building",
+      items: [
+        { name: "Service 1", path: "/admin/dept-a/service-1" },
+        { name: "Service 2", path: "/admin/dept-a/service-2" },
+      ]
+    },
+    // Add more categories/departments here
+  ];
 
   onMount(() => {
-    if (isMicroserviceActive()) {
-      isMicroservicesOpen = true;
-    }
+    categories.forEach(category => {
+      if (category.items.some(item => location.pathname.startsWith(item.path))) {
+        openCategories[category.name] = true;
+      }
+    });
   });
 </script>
 
@@ -36,30 +54,34 @@
         <i class="fas fa-home mr-2 text-sm"></i>
         Home
       </a>
-      <div class="relative">
-        <button 
-          class="sidebar-link flex items-center w-full text-left" 
-          on:click={toggleMicroservices}
-        >
-          <i class="fas fa-server mr-2 text-sm"></i>
-          Microservices
-          <i class="fas fa-chevron-{isMicroservicesOpen ? 'up' : 'down'} ml-auto"></i>
-        </button>
-        {#if isMicroservicesOpen}
-          <div class="ml-4">
-            <a use:link 
-               href="/admin/dashboard"
-               class="sidebar-link {isLinkActive('/admin/dashboard') ? 'active active-microservice' : ''}">
-              <i class="fas fa-tv mr-2 text-sm"></i>
-              Sanctions Services
-            </a>
-            <!-- Add more microservice links here -->
-          </div>
-        {/if}
-      </div>
+      {#each categories as category}
+        <div class="relative">
+          <button 
+            class="sidebar-link flex items-center w-full text-left" 
+            on:click={() => toggleCategory(category.name)}
+          >
+            <i class="{category.icon} mr-2 text-sm"></i>
+            {category.name}
+            <i class="fas fa-chevron-{openCategories[category.name] ? 'up' : 'down'} ml-auto"></i>
+          </button>
+          {#if openCategories[category.name]}
+            <div class="ml-4">
+              {#each category.items as item}
+                <a use:link 
+                   href={item.path}
+                   class="sidebar-link {isLinkActive(item.path) ? 'active active-microservice' : ''}">
+                  <i class="fas fa-circle-notch mr-2 text-xs"></i>
+                  {item.name}
+                </a>
+              {/each}
+            </div>
+          {/if}
+        </div>
+      {/each}
     </div>
   </div>
 </nav>
+
 
 <style>
   nav {

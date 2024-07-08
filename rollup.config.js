@@ -1,30 +1,25 @@
-import svelte from "rollup-plugin-svelte";
-import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
-import livereload from "rollup-plugin-livereload";
-import { terser } from "rollup-plugin-terser";
-// library that helps you import in svelte with
-// absolute paths, instead of
-// import Component  from "../../../../components/Component.svelte";
-// we will be able to say
-// import Component from "components/Component.svelte";
-import alias from "@rollup/plugin-alias";
-import fs from "fs";
+import svelte from 'rollup-plugin-svelte';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import livereload from 'rollup-plugin-livereload';
+import { terser } from 'rollup-plugin-terser';
+import alias from '@rollup/plugin-alias';
+import css from 'rollup-plugin-css-only';
+import fs from 'fs';
 
 const production = !process.env.ROLLUP_WATCH;
 
 // configure aliases for absolute imports
 const aliases = alias({
-  resolve: [".svelte", ".js"], //optional, by default this will just look for .js files or folders
+  resolve: ['.svelte', '.js'], //optional, by default this will just look for .js files or folders
   entries: [
-    { find: "components", replacement: "src/components" },
-    { find: "views", replacement: "src/views" },
-    { find: "assets", replacement: "src/assets" },
+    { find: 'components', replacement: 'src/components' },
+    { find: 'views', replacement: 'src/views' },
+    { find: 'assets', replacement: 'src/assets' },
   ],
 });
 
 const indexTemplate = `<!--
-
 =========================================================
 * Notus Svelte - v1.1.0 based on Tailwind Starter Kit by Creative Tim
 =========================================================
@@ -81,41 +76,41 @@ const indexTemplate = `<!--
 
 if (production) {
   fs.writeFileSync(
-    "./public/index.html",
+    './public/index.html',
     indexTemplate
-      .replace("<<process-env-status>>", "PRODUCTION: true")
-      .replace(/<<live-preview-link>>/g, "/notus-svelte")
+      .replace('<<process-env-status>>', 'PRODUCTION: true')
+      .replace(/<<live-preview-link>>/g, '/notus-svelte')
   );
   fs.writeFileSync(
-    "./public/200.html",
+    './public/200.html',
     indexTemplate
-      .replace("<<process-env-status>>", "PRODUCTION: true")
-      .replace(/<<live-preview-link>>/g, "/notus-svelte")
+      .replace('<<process-env-status>>', 'PRODUCTION: true')
+      .replace(/<<live-preview-link>>/g, '/notus-svelte')
   );
   fs.writeFileSync(
-    "./public/404.html",
+    './public/404.html',
     indexTemplate
-      .replace("<<process-env-status>>", "PRODUCTION: true")
-      .replace(/<<live-preview-link>>/g, "/notus-svelte")
+      .replace('<<process-env-status>>', 'PRODUCTION: true')
+      .replace(/<<live-preview-link>>/g, '/notus-svelte')
   );
 } else {
   fs.writeFileSync(
-    "./public/index.html",
+    './public/index.html',
     indexTemplate
-      .replace("<<process-env-status>>", "")
-      .replace(/<<live-preview-link>>/g, "")
+      .replace('<<process-env-status>>', '')
+      .replace(/<<live-preview-link>>/g, '')
   );
   fs.writeFileSync(
-    "./public/200.html",
+    './public/200.html',
     indexTemplate
-      .replace("<<process-env-status>>", "")
-      .replace(/<<live-preview-link>>/g, "")
+      .replace('<<process-env-status>>', '')
+      .replace(/<<live-preview-link>>/g, '')
   );
   fs.writeFileSync(
-    "./public/404.html",
+    './public/404.html',
     indexTemplate
-      .replace("<<process-env-status>>", "")
-      .replace(/<<live-preview-link>>/g, "")
+      .replace('<<process-env-status>>', '')
+      .replace(/<<live-preview-link>>/g, '')
   );
 }
 
@@ -129,28 +124,28 @@ function serve() {
   return {
     writeBundle() {
       if (server) return;
-      server = require("child_process").spawn(
-        "npm",
-        ["run", "start", "--", "--dev"],
+      server = require('child_process').spawn(
+        'npm',
+        ['run', 'start', '--', '--dev'],
         {
-          stdio: ["ignore", "inherit", "inherit"],
+          stdio: ['ignore', 'inherit', 'inherit'],
           shell: true,
         }
       );
 
-      process.on("SIGTERM", toExit);
-      process.on("exit", toExit);
+      process.on('SIGTERM', toExit);
+      process.on('exit', toExit);
     },
   };
 }
 
 export default {
-  input: "src/main.js",
+  input: 'src/main.js',
   output: {
     sourcemap: true,
-    format: "iife",
-    name: "app",
-    file: "public/build/bundle.js",
+    format: 'iife',
+    name: 'app',
+    file: 'public/build/bundle.js',
   },
   plugins: [
     svelte({
@@ -159,9 +154,12 @@ export default {
       // we'll extract any component CSS out into
       // a separate file - better for performance
       css: (css) => {
-        css.write("bundle.css");
+        css.write('bundle.css');
       },
     }),
+
+    // Process CSS files
+    css({ output: 'bundle.css' }),
 
     // If you have external dependencies installed from
     // npm, you'll most likely need these plugins. In
@@ -170,7 +168,7 @@ export default {
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
     resolve({
       browser: true,
-      dedupe: ["svelte"],
+      dedupe: ['svelte'],
     }),
     commonjs(),
 
@@ -180,17 +178,13 @@ export default {
 
     // Watch the `public` directory and refresh the
     // browser on changes when not in production
-    !production && livereload("public"),
+    !production && livereload('public'),
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify
     production && terser(),
 
-    // for absolut imports
-    // i.e., instead of
-    // import Component  from "../../../../components/Component.svelte";
-    // we will be able to say
-    // import Component from "components/Component.svelte";
+    // for absolute imports
     aliases,
   ],
   watch: {

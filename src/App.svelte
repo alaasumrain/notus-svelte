@@ -1,27 +1,15 @@
-<!-- App.svelte -->
 <script>
   import { Router, Route } from "svelte-routing";
-
-  // Admin Layout
-  import Admin from "./layouts/Admin.svelte";
-  // Auth Layout
-  import Auth from "./layouts/Auth.svelte";
-
-  // No Layout Pages
-  import Index from "./views/Index.svelte";
-  import Landing from "./views/Landing.svelte";
-  import Profile from "./views/Profile.svelte";
+  import Home from "./views/Home.svelte"; // Import the new Home component
+  import Admin from "./layouts/Admin.svelte"; // Import the Admin layout
 
   export let url = "";
 </script>
 
-<Router url="{url}">
-  <!-- admin layout -->
-  <Route path="admin/*admin" component="{Admin}" />
-  <!-- auth layout -->
-  <Route path="auth/*auth" component="{Auth}" />
-  <!-- no layout pages -->
-  <Route path="landing" component="{Landing}" />
-  <Route path="profile" component="{Profile}" />
-  <Route path="/" component="{Index}" />
+<Router {url}>
+  <!-- Home route -->
+  <Route path="/" component={Home} />
+
+  <!-- Admin layout -->
+  <Route path="admin/*" component={Admin} />
 </Router>

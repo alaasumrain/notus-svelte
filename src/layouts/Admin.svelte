@@ -1,35 +1,31 @@
 <script>
   import { Router, Route } from "svelte-routing";
-
-  // components for this layout
+  import Sidebar from "components/Sidebar.svelte";
   import AdminNavbar from "components/Navbars/AdminNavbar.svelte";
-  import Sidebar from "components/Sidebar/Sidebar.svelte";
-  import HeaderStats from "components/Headers/HeaderStats.svelte";
-  import FooterAdmin from "components/Footers/FooterAdmin.svelte";
-
-  // pages for this layout
+  import Footer from "components/Footer.svelte";
+  import Header from "components/Header.svelte";
   import Dashboard from "views/admin/Dashboard.svelte";
-  import Settings from "views/admin/Settings.svelte";
-  import Tables from "views/admin/Tables.svelte";
-  import Maps from "views/admin/Maps.svelte";
 
   export let location;
-  export let admin = "";
 </script>
 
-<div>
-  <Sidebar location={location}/>
-  <div class="relative md:ml-64 bg-blueGray-100">
+<div class="relative flex min-h-screen bg-blueGray-100">
+  <Sidebar {location} />
+  <div class="flex-1 flex flex-col">
     <AdminNavbar />
-    <HeaderStats />
-    <div class="px-4 md:px-10 mx-auto w-full -m-24">
-      <Router url="admin">
-        <Route path="dashboard" component="{Dashboard}" />
-        <Route path="settings" component="{Settings}" />
-        <Route path="tables" component="{Tables}" />
-        <Route path="maps" component="{Maps}" />
+    <Header title="Dashboard" />
+    <div class="px-4 md:px-10 mx-auto w-full flex-grow">
+      <Router>
+        <Route path="/dashboard" component={Dashboard} />
+        <!-- Add other admin routes here if needed -->
       </Router>
-      <FooterAdmin />
     </div>
+    <Footer />
   </div>
 </div>
+
+<style>
+  .main-content-wrapper {
+    background-color: #F7FAFC; /* Ensure this matches your desired background color */
+  }
+</style>

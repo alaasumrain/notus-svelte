@@ -17,10 +17,11 @@ module.exports = {
     },
   },
   theme: {
-    colors: {
-      ...colors,
-    },
     extend: {
+      colors: {
+        ...colors,
+        blueGray: colors.blueGray, // Ensure blueGray is available
+      },
       minHeight: {
         "screen-75": "75vh",
       },

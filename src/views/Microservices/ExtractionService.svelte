@@ -1,110 +1,118 @@
 <script>
-    import { link } from "svelte-routing";
     import Sidebar from "components/Sidebar.svelte";
     import Header from "components/Header.svelte";
     import Footer from "components/Footer.svelte";
-    import axios from 'axios';
+    import { onMount, onDestroy } from 'svelte';
   
     export let location;
-  
     let files = [];
     let processingStatus = "idle"; // idle, processing, complete, error
-    let statusMessage = "";
-    let downloadUrl = null;
+    let results = null;
+    let progress = 0;
     let logs = [];
+    let intervalId;
+    let logBox;
   
-    function handleFileUpload(event) {
-      const uploadedFiles = event.target.files;
-      files = [...uploadedFiles];
-      addLog(`Selected ${files.length} file(s)`);
-    }
+    onMount(() => {
+      intervalId = setInterval(checkProgress, 1000);
+    });
   
-    function handleFolderUpload(event) {
-      const uploadedFiles = event.target.files;
-      files = [...uploadedFiles];
-      addLog(`Selected folder with ${files.length} file(s)`);
-    }
+    onDestroy(() => {
+      clearInterval(intervalId);
+    });
   
-    function addLog(message) {
-      const timestamp = new Date().toLocaleTimeString();
-      logs = [...logs, `[${timestamp}] ${message}`];
+    async function handleFolderSelect(event) {
+      const selectedFiles = Array.from(event.target.files);
+      files = selectedFiles.filter(file => file.name.endsWith('.zip'));
+      results = null;
     }
   
     async function processFiles() {
       if (files.length === 0) {
-        statusMessage = "Please select files to process.";
-        addLog("Error: No files selected");
+        alert("Please select a folder containing ZIP files to process.");
         return;
       }
   
       processingStatus = "processing";
-      statusMessage = "Processing files...";
-      downloadUrl = null;
-      addLog("Starting file processing");
-  
+      progress = 0;
+      logs = [];
       const formData = new FormData();
       files.forEach((file, index) => {
-        formData.append(`file${index}`, file);
+        formData.append('files', file);
       });
   
       try {
-        const response = await axios.post('/api/extract/', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          responseType: 'blob',
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            addLog(`Upload progress: ${percentCompleted}%`);
-          }
+        const response = await fetch('http://localhost:8000/api/process_cliq/', {
+          method: 'POST',
+          body: formData,
         });
   
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        downloadUrl = url;
+        if (!response.ok) throw new Error('Processing failed');
+  
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = "processed_files.xlsx";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+  
         processingStatus = "complete";
-        statusMessage = "Files processed successfully. Click the download button to get the result.";
-        addLog("File processing completed successfully");
+        results = "Files processed successfully!";
       } catch (error) {
+        console.error('Error:', error);
         processingStatus = "error";
-        statusMessage = error.response?.data?.error || "An error occurred while processing the files.";
-        addLog(`Error: ${statusMessage}`);
-        console.error(error);
+        results = "Error processing files.";
+      }
+    }
+  
+    async function checkProgress() {
+      if (processingStatus === "processing") {
+        const response = await fetch('http://localhost:8000/api/progress/');
+        if (response.ok) {
+          const data = await response.json();
+          progress = data.progress;
+          logs = data.logs;
+          if (logBox) {
+            logBox.scrollTop = logBox.scrollHeight;
+          }
+        }
       }
     }
   </script>
   
-  <div class="relative md:ml-64 bg-blueGray-100 min-h-screen">
+  <div class="relative md:ml-64 bg-gray-100 min-h-screen">
     <Sidebar {location} />
     <div class="relative w-full">
-      <Header title="CliQ Extraction Service" />
-      <div class="px-4 md:px-10 mx-auto w-full">
+      <Header title="File Extraction Service" />
+      <div class="px-8 py-6 mx-auto w-full max-w-7xl">
         <main class="main-content">
-          <div class="service-container bg-white rounded-lg shadow-lg p-6">
-            <h1 class="service-title text-2xl font-bold mb-4">CliQ Extraction Service</h1>
-            <hr class="separator mb-6" />
+          <div class="bg-white shadow-lg rounded-lg p-8 mb-8">
+            <h1 class="text-4xl font-bold mb-8 text-gray-800">File Extraction Service</h1>
             
-            <div class="file-upload-section mb-6">
-              <h2 class="section-title text-xl font-semibold mb-2">Upload Files</h2>
-              <div class="flex space-x-4">
-                <div>
-                  <label for="file-upload" class="btn bg-blue-500 text-white px-4 py-2 rounded cursor-pointer">
-                    Select Files
-                  </label>
-                  <input id="file-upload" type="file" multiple on:change={handleFileUpload} accept=".zip,.xlsx" class="hidden" />
-                </div>
-                <div>
-                  <label for="folder-upload" class="btn bg-green-500 text-white px-4 py-2 rounded cursor-pointer">
-                    Select Folder
-                  </label>
-                  <input id="folder-upload" type="file" webkitdirectory directory multiple on:change={handleFolderUpload} class="hidden" />
-                </div>
-              </div>
+            <div class="mb-8">
+              <h2 class="text-2xl font-semibold mb-4 text-gray-700">Select Folder</h2>
+              <input 
+                type="file" 
+                webkitdirectory 
+                directory 
+                on:change={handleFolderSelect} 
+                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+              />
+              <button 
+                on:click={processFiles}
+                disabled={files.length === 0 || processingStatus === "processing"}
+                class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 text-lg font-semibold"
+              >
+                {processingStatus === "processing" ? "Processing..." : "Process Files"}
+              </button>
             </div>
   
             {#if files.length > 0}
-              <div class="file-list mb-4">
-                <h3 class="text-lg font-semibold mb-2">Selected Files:</h3>
-                <ul class="list-disc pl-5">
+              <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-gray-700">Selected ZIP Files:</h3>
+                <ul class="list-disc pl-5 text-gray-700">
                   {#each files as file}
                     <li>{file.name}</li>
                   {/each}
@@ -112,31 +120,34 @@
               </div>
             {/if}
   
-            <button on:click={processFiles} disabled={files.length === 0 || processingStatus === "processing"} 
-                    class="bg-blue-500 text-white px-4 py-2 rounded mb-4 {files.length === 0 || processingStatus === "processing" ? 'opacity-50 cursor-not-allowed' : ''}">
-              {processingStatus === "processing" ? "Processing..." : "Process Files"}
-            </button>
-  
-            {#if statusMessage}
-              <div class="status-message mb-4 p-2 rounded" class:bg-yellow-100={processingStatus === "processing"} class:bg-green-100={processingStatus === "complete"} class:bg-red-100={processingStatus === "error"}>
-                {statusMessage}
+            {#if processingStatus === "processing"}
+              <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-gray-700">Processing Progress:</h3>
+                <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+                  <div class="bg-blue-600 h-4 rounded-full transition-all duration-300 ease-in-out" style="width: {progress}%"></div>
+                </div>
+                <p class="text-gray-600 text-lg">{progress}% Complete</p>
               </div>
             {/if}
   
-            {#if downloadUrl}
-              <div class="download-section mb-4">
-                <a href={downloadUrl} download="processed_files.xlsx" class="bg-green-500 text-white px-4 py-2 rounded">Download Processed Files</a>
-              </div>
-            {/if}
-  
-            <div class="log-section">
-              <h3 class="text-lg font-semibold mb-2">Processing Logs:</h3>
-              <div class="bg-gray-100 p-2 rounded h-40 overflow-y-auto">
+            <div class="mb-8">
+              <h3 class="text-xl font-semibold mb-4 text-gray-700">Processing Logs:</h3>
+              <div 
+                bind:this={logBox}
+                class="log-container"
+              >
                 {#each logs as log}
-                  <p class="text-sm">{log}</p>
+                  <p class="log-entry">{log}</p>
                 {/each}
               </div>
             </div>
+  
+            {#if results}
+              <div>
+                <h3 class="text-xl font-semibold mb-4 text-gray-700">Results:</h3>
+                <p class={`text-lg ${processingStatus === "complete" ? "text-green-600" : "text-red-600"}`}>{results}</p>
+              </div>
+            {/if}
           </div>
         </main>
       </div>
@@ -144,13 +155,13 @@
     </div>
   </div>
   
- 
-  
   <style>
     .main-content {
       padding: 2rem 0;
       margin-top: 4rem;
       padding: 4rem 2rem;
+      max-height: calc(100vh - 4rem);
+      overflow-y: auto;
     }
     .service-container {
       background-color: white;
@@ -159,7 +170,7 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     .service-title {
-      font-size: 2rem;
+      font-size: 2.5rem;
       font-weight: bold;
       margin-bottom: 1rem;
     }
@@ -168,16 +179,26 @@
       border-top: 1px solid #e2e8f0;
       margin: 1rem 0 2rem;
     }
-    .section-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
     .file-upload-section {
       margin-bottom: 2rem;
     }
-    .file-list, .processing-status, .results {
-      margin-top: 2rem
+    .file-list, .processing-status, .progress {
+      margin-top: 2rem;
+    }
+    .log-container {
+      background-color: #f7fafc;
+      padding: 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.375rem;
+      height: 250px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column-reverse;
+    }
+    .log-entry {
+      font-family: monospace;
+      color: #4a5568;
+      margin-bottom: 0.25rem;
     }
   </style>
   

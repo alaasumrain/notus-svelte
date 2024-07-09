@@ -2,14 +2,14 @@
   import { Router, Route } from "svelte-routing";
   import Home from "./views/Home.svelte";
   import Admin from "./layouts/Admin.svelte";
-  import ExtractionService from "./views/microservices/ExtractionService.svelte" 
+  import ExtractionService from "./views/microservices/ExtractionService.svelte";
   export let url = "";
 </script>
 
 <div class="app-wrapper">
   <Router {url}>
     <Route path="/" component={Home} />
-    <Route path="admin/*" component={Admin} />
+    <Route path="/admin/*" component={Admin} />
     <Route path="/admin/microservices/extraction" component={ExtractionService} />
   </Router>
 </div>

@@ -13,7 +13,7 @@
   <Sidebar {location} />
   <div class="flex-1 flex flex-col">
     <AdminNavbar />
-    <Header title="Dashboard" />
+    <Header /> <!-- No title prop here -->
     <div class="px-4 md:px-10 mx-auto w-full flex-grow">
       <Router>
         <Route path="/dashboard" component={Dashboard} />

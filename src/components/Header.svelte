@@ -4,7 +4,9 @@
 
 <header class="header-container">
   <div class="header-content">
-    <h1 class="header-title">{title}</h1>
+    {#if title}
+      <h1 class="header-title">{title}</h1>
+    {/if}
     <!-- Add any additional header elements here -->
   </div>
 </header>

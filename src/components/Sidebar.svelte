@@ -11,7 +11,10 @@
   }
 
   function isLinkActive(path) {
-    return selectedItem === path;
+    if (path === '/') {
+      return location.pathname === '/' || location.pathname === '';
+    }
+    return location.pathname.startsWith(path);
   }
 
   let categories = [
@@ -24,19 +27,17 @@
       name: "Microservices",
       icon: "fas fa-server",
       items: [
-        { name: "Sanctions Services", path: "/admin/dashboard" },
-        // Add more microservices here
+        { name: "File Extraction", path: "/admin/microservices/extraction" },
+        { name: "Data Reconciliation", path: "/admin/microservices/reconciliation" },
       ]
     },
     {
-      name: "Department A",
+      name: "Departments",
       icon: "fas fa-building",
       items: [
-        { name: "Service 1", path: "/admin/dept-a/service-1" },
-        { name: "Service 2", path: "/admin/dept-a/service-2" },
+        { name: "Sanctions Services", path: "/admin/dashboard" },
       ]
     },
-    // Add more categories/departments here
   ];
 
   onMount(() => {
@@ -53,6 +54,10 @@
       }
     });
   }
+
+  $: {
+    updateSelectedItem(location.pathname);
+  }
 </script>
 
 <nav class="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto shadow-xl bg-white flex flex-col items-start justify-start w-64 z-10 py-4 px-6">
@@ -66,8 +71,7 @@
           {#if !category.items}
             <a use:link 
                href={category.path}
-               class="sidebar-link {isLinkActive(category.path) ? 'active' : ''}"
-               on:click={() => updateSelectedItem(category.path)}>
+               class="sidebar-link {isLinkActive(category.path) ? 'active' : ''}">
               <i class="{category.icon} mr-2 text-sm"></i>
               {category.name}
             </a>
@@ -85,8 +89,7 @@
                 {#each category.items as item}
                   <a use:link 
                      href={item.path}
-                     class="sidebar-link {isLinkActive(item.path) ? 'active' : ''}"
-                     on:click={() => updateSelectedItem(item.path)}>
+                     class="sidebar-link {isLinkActive(item.path) ? 'active' : ''}">
                     <i class="fas fa-circle-notch mr-2 text-xs"></i>
                     {item.name}
                   </a>
@@ -99,6 +102,7 @@
     </div>
   </div>
 </nav>
+
 
 <style>
   nav {

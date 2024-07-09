@@ -73,18 +73,18 @@
 
 <style>
   .main-content {
-    padding: 4rem 0; /* Increased padding for better spacing */
-    margin-top: 6rem; /* Adjusted based on your header height */
-    padding: 4rem 2rem; /* Additional padding for a richer feel */
+    padding: 2rem 0;
+    margin-top: 4rem;
+    padding: 4rem 2rem;
   }
   .services-container {
     background-color: white;
     border-radius: 0.5rem;
-    padding: 3rem; /* Increased padding */
+    padding: 3rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   .services-title {
-    font-size: 2rem; /* Increased font size for title */
+    font-size: 2rem;
     font-weight: bold;
     margin-bottom: 1rem;
   }
@@ -96,7 +96,7 @@
   .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem; /* Increased gap */
+    gap: 2rem;
     justify-content: center;
   }
 </style>

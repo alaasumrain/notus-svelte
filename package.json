@@ -30,7 +30,9 @@
     "@popperjs/core": "2.9.1",
     "@rollup/plugin-alias": "3.1.2",
     "@tailwindcss/forms": "0.2.1",
+    "axios": "^1.7.2",
     "chart.js": "2.9.4",
+    "lodash-es": "^4.17.21",
     "sirv-cli": "1.0.11",
     "svelte-routing": "^1.5.0",
     "tailwindcss": "^2.2.19"

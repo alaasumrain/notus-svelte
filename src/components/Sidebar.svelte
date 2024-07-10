@@ -1,13 +1,13 @@
 <script>
   import { onMount } from 'svelte';
-  import { link } from "svelte-routing";
+  import { link } from 'svelte-routing';
   export let location;
 
   let openCategories = {};
   let selectedItem = '';
 
   function toggleCategory(category) {
-    openCategories[category] = openCategories[category] ? false : true;
+    openCategories[category] = !openCategories[category];
     // Ensure only one category is open at a time
     for (const key in openCategories) {
       if (key !== category) {
@@ -34,7 +34,7 @@
       icon: "fas fa-server",
       items: [
         { name: "CliQ Sessions Combiner", path: "/admin/microservices/cliq-sessions-combiner" },
-        { name: "Data Reconciliation", path: "/admin/microservices/reconciliation" },
+        { name: "CliQ Reconciliation", path: "/admin/microservices/cliq-reconciliation" },  // Ensure correct naming
       ]
     },
     {
@@ -61,9 +61,7 @@
     });
   }
 
-  $: {
-    updateSelectedItem(location.pathname);
-  }
+  $: updateSelectedItem(location.pathname);
 </script>
 
 <nav class="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto shadow-xl bg-white flex flex-col items-start justify-start w-64 z-10 py-4 px-6">

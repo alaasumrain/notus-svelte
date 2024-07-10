@@ -1,9 +1,13 @@
 <script>
   import { Router, Route } from "svelte-routing";
   import Home from "./views/Home.svelte";
-  import Admin from "./layouts/Admin.svelte"; // Updated path for Admin.svelte
+  import Admin from "./layouts/Admin.svelte";
   import CliQSessionsCombiner from "./views/microservices/CliQSessionsCombiner.svelte";
+  import CliQReconciliation from "./views/microservices/CliQReconciliation.svelte";
+  
   export let url = "";
+
+  console.log('App started with URL:', url);
 </script>
 
 <div class="app-wrapper">
@@ -11,6 +15,7 @@
     <Route path="/" component={Home} />
     <Route path="/admin/*" component={Admin} />
     <Route path="/admin/microservices/cliq-sessions-combiner" component={CliQSessionsCombiner} />
+    <Route path="/admin/microservices/cliq-reconciliation" component={CliQReconciliation} />
   </Router>
 </div>
 

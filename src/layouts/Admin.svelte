@@ -13,12 +13,13 @@
   <div class="flex-1 flex flex-col">
     <AdminNavbar />
     <Header /> <!-- No title prop here -->
-    <div class="px-4 md:px-10 mx-auto w-full flex-grow main-content-wrapper">
+    <div class="px-4 md:px-10 mx-auto w-full flex-grow">
       <Router>
         <Route path="/dashboard" component={Dashboard} />
         <!-- Add other admin routes here if needed -->
       </Router>
     </div>
+
   </div>
 </div>
 

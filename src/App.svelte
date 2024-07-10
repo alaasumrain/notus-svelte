@@ -1,8 +1,8 @@
 <script>
   import { Router, Route } from "svelte-routing";
   import Home from "./views/Home.svelte";
-  import Admin from "./layouts/Admin.svelte";
-  import ExtractionService from "./views/microservices/ExtractionService.svelte";
+  import Admin from "./layouts/Admin.svelte"; // Updated path for Admin.svelte
+  import CliQSessionsCombiner from "./views/microservices/CliQSessionsCombiner.svelte";
   export let url = "";
 </script>
 
@@ -10,7 +10,7 @@
   <Router {url}>
     <Route path="/" component={Home} />
     <Route path="/admin/*" component={Admin} />
-    <Route path="/admin/microservices/extraction" component={ExtractionService} />
+    <Route path="/admin/microservices/cliq-sessions-combiner" component={CliQSessionsCombiner} />
   </Router>
 </div>
 

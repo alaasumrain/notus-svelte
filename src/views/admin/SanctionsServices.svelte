@@ -9,22 +9,22 @@
   let services = [
     { 
       id: 1, 
-      name: 'CliQ - Files Merge to Excel', 
+      name: 'CliQ Sessions Combiner', 
       category: 'Category A', 
       description: 'Merge various files into a single Excel sheet',
       logoUrl: 'extract.png',
       status: 'Live',
-      route: '/admin/microservices/files-merge',
+      route: '/admin/microservices/extraction',
       tags: ['excel', 'merge', 'files']
     },
     { 
       id: 2, 
-      name: 'CliQ - System Files Reconciliation', 
+      name: 'System Files Reconciliation', 
       category: 'Category B', 
       description: 'Reconcile system files for consistency and accuracy',
       logoUrl: 'reconcile.png',
       status: 'Live',
-      route: '/admin/microservices/files-reconciliation',
+      route: '/admin/microservices/reconciliation',
       tags: ['reconciliation', 'files', 'system']
     },
     // ... add more services as needed

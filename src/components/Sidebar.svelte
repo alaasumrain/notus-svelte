@@ -7,7 +7,13 @@
   let selectedItem = '';
 
   function toggleCategory(category) {
-    openCategories[category] = !openCategories[category];
+    openCategories[category] = openCategories[category] ? false : true;
+    // Ensure only one category is open at a time
+    for (const key in openCategories) {
+      if (key !== category) {
+        openCategories[key] = false;
+      }
+    }
   }
 
   function isLinkActive(path) {
@@ -27,7 +33,7 @@
       name: "Microservices",
       icon: "fas fa-server",
       items: [
-        { name: "File Extraction", path: "/admin/microservices/extraction" },
+        { name: "CliQ Sessions Combiner", path: "/admin/microservices/cliq-sessions-combiner" },
         { name: "Data Reconciliation", path: "/admin/microservices/reconciliation" },
       ]
     },
@@ -102,7 +108,6 @@
     </div>
   </div>
 </nav>
-
 
 <style>
   nav {

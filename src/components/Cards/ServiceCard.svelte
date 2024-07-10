@@ -1,4 +1,5 @@
 <script>
+  import { link } from "svelte-routing";
   export let service;
   export let onClick;
 
@@ -18,39 +19,45 @@
   $: if (logoUrl) console.log(`Attempting to load logo: ${logoUrl}`);
 </script>
 
-<div 
-  class="service-card bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer flex flex-col text-center"
-  role="button"
+<a 
+  use:link 
+  href={service.route} 
+  class="service-card-link"
   on:click={() => onClick(service.id)}
   on:keydown={handleKeyDown}
   tabindex="0"
 >
-  <div class="h-40 w-full rounded-t-lg overflow-hidden flex items-center justify-center p-4">
-    {#if logoUrl && imageLoaded}
-      <img 
-        src={logoUrl} 
-        alt={service.name} 
-        class="max-h-full max-w-full object-contain"
-        on:error={handleImageError}
-      />
-    {:else}
-      <svg class="w-24 h-24 text-gray-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M13 7H7V13H13V7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M17 11H11V17H17V11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    {/if}
-  </div>
-  <div class="flex-grow flex flex-col justify-start p-4">
-    <h3 class="text-lg font-semibold text-gray-800 mb-1 truncate">{service.name}</h3>
-    <p class="text-sm text-gray-600 mb-2 truncate">{service.category}</p>
-    <p class="text-sm text-gray-700 line-clamp-2 mb-2">{service.description}</p>
-    <div class="mt-auto">
-      <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-        {service.status}
-      </span>
+  <div 
+    class="service-card bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer flex flex-col text-center"
+    role="button"
+  >
+    <div class="h-40 w-full rounded-t-lg overflow-hidden flex items-center justify-center p-4">
+      {#if logoUrl && imageLoaded}
+        <img 
+          src={logoUrl} 
+          alt={service.name} 
+          class="max-h-full max-w-full object-contain"
+          on:error={handleImageError}
+        />
+      {:else}
+        <svg class="w-24 h-24 text-gray-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 7H7V13H13V7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M17 11H11V17H17V11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      {/if}
+    </div>
+    <div class="flex-grow flex flex-col justify-start p-4">
+      <h3 class="text-lg font-semibold text-gray-800 mb-1 truncate">{service.name}</h3>
+      <p class="text-sm text-gray-600 mb-2 truncate">{service.category}</p>
+      <p class="text-sm text-gray-700 line-clamp-2 mb-2">{service.description}</p>
+      <div class="mt-auto">
+        <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+          {service.status}
+        </span>
+      </div>
     </div>
   </div>
-</div>
+</a>
 
 <style>
   .service-card {

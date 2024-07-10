@@ -32,6 +32,8 @@
     "@tailwindcss/forms": "0.2.1",
     "axios": "^1.7.2",
     "chart.js": "2.9.4",
+    "d3-dsv": "^3.0.1",
+    "d3-fetch": "^3.0.1",
     "lodash-es": "^4.17.21",
     "sirv-cli": "1.0.11",
     "svelte-routing": "^1.5.0",

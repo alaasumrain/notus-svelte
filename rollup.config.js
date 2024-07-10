@@ -125,7 +125,12 @@ export default {
     format: 'iife',
     name: 'app',
     file: '../notus-svelte/public/build/bundle.js',
+    globals: {
+      'd3-fetch': 'd3',
+      'd3-dsv': 'd3'
+    }
   },
+  external: ['d3-fetch', 'd3-dsv'],
   plugins: [
     svelte({
       compilerOptions: {
@@ -137,16 +142,17 @@ export default {
     // Process CSS files
     css({ output: 'bundle.css' }),
 
-    // If you have external dependencies installed from
-    // npm, you'll most likely need these plugins. In
-    // some cases you'll need additional configuration -
-    // consult the documentation for details:
-    // https://github.com/rollup/plugins/tree/master/packages/commonjs
     resolve({
       browser: true,
       dedupe: ['svelte'],
+      exportConditions: ['svelte'],
+      extensions: ['.svelte', '.mjs', '.js', '.json', '.node']
     }),
-    commonjs(),
+    
+    commonjs({
+      include: ['node_modules/**', 'node_modules/d3-fetch/**', 'node_modules/d3-dsv/**'],
+      extensions: ['.js', '.cjs']
+    }),
 
     // In dev mode, call `npm run start` once
     // the bundle has been generated

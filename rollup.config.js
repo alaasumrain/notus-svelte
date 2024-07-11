@@ -40,7 +40,6 @@ const indexTemplate = `<!DOCTYPE html>
         var process = { env: {<<process-env-status>>} };
       }
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
     <script defer src="<<live-preview-link>>/build/bundle.js"></script>
   </head>
 
@@ -125,12 +124,7 @@ export default {
     format: 'iife',
     name: 'app',
     file: '../notus-svelte/public/build/bundle.js',
-    globals: {
-      'd3-fetch': 'd3',
-      'd3-dsv': 'd3'
-    }
   },
-  external: ['d3-fetch', 'd3-dsv'],
   plugins: [
     svelte({
       compilerOptions: {
@@ -149,10 +143,7 @@ export default {
       extensions: ['.svelte', '.mjs', '.js', '.json', '.node']
     }),
     
-    commonjs({
-      include: ['node_modules/**', 'node_modules/d3-fetch/**', 'node_modules/d3-dsv/**'],
-      extensions: ['.js', '.cjs']
-    }),
+    commonjs(),
 
     // In dev mode, call `npm run start` once
     // the bundle has been generated

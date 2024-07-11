@@ -1,10 +1,10 @@
 <script>
   import { onMount } from 'svelte';
   import { link } from 'svelte-routing';
-  export let location;
 
   let openCategories = {};
   let selectedItem = '';
+  let currentPath = '';
 
   function toggleCategory(category) {
     openCategories[category] = !openCategories[category];
@@ -14,13 +14,6 @@
         openCategories[key] = false;
       }
     }
-  }
-
-  function isLinkActive(path) {
-    if (path === '/') {
-      return location.pathname === '/' || location.pathname === '';
-    }
-    return location.pathname.startsWith(path);
   }
 
   let categories = [
@@ -34,7 +27,7 @@
       icon: "fas fa-server",
       items: [
         { name: "CliQ Sessions Combiner", path: "/admin/microservices/cliq-sessions-combiner" },
-        { name: "CliQ Reconciliation", path: "/admin/microservices/cliq-reconciliation" },  // Ensure correct naming
+        { name: "CliQ Reconciliation", path: "/admin/microservices/cliq-reconciliation" },
       ]
     },
     {
@@ -47,7 +40,8 @@
   ];
 
   onMount(() => {
-    updateSelectedItem(location.pathname);
+    currentPath = window.location.pathname;
+    updateSelectedItem(currentPath);
   });
 
   function updateSelectedItem(path) {
@@ -61,7 +55,19 @@
     });
   }
 
-  $: updateSelectedItem(location.pathname);
+  function isActive(path) {
+    if (path === '/') {
+      return currentPath === '/' || currentPath === '';
+    }
+    return currentPath.startsWith(path);
+  }
+
+  $: {
+    if (typeof window !== 'undefined') {
+      currentPath = window.location.pathname;
+      updateSelectedItem(currentPath);
+    }
+  }
 </script>
 
 <nav class="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto shadow-xl bg-white flex flex-col items-start justify-start w-64 z-10 py-4 px-6">
@@ -73,9 +79,9 @@
       {#each categories as category}
         <div class="relative">
           {#if !category.items}
-            <a use:link 
+            <a use:link
                href={category.path}
-               class="sidebar-link {isLinkActive(category.path) ? 'active' : ''}">
+               class="sidebar-link {isActive(category.path) ? 'active' : ''}">
               <i class="{category.icon} mr-2 text-sm"></i>
               {category.name}
             </a>
@@ -91,9 +97,9 @@
             {#if openCategories[category.name]}
               <div class="ml-4">
                 {#each category.items as item}
-                  <a use:link 
+                  <a use:link
                      href={item.path}
-                     class="sidebar-link {isLinkActive(item.path) ? 'active' : ''}">
+                     class="sidebar-link {isActive(item.path) ? 'active' : ''}">
                     <i class="fas fa-circle-notch mr-2 text-xs"></i>
                     {item.name}
                   </a>

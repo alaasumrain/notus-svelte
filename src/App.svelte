@@ -3,7 +3,7 @@
   import Home from "./views/Home.svelte";
   import Admin from "./layouts/Admin.svelte";
   import CliQSessionsCombiner from "./views/microservices/CliQSessionsCombiner.svelte";
-  import CliQReconciliation from "./views/microservices/CliQReconciliation.svelte";
+  import CliQReconciliation from "./views/microservices/CliQReconciliation/CliQReconciliation.svelte";
   
   export let url = "";
 
